@@ -1,9 +1,12 @@
 /**
  * OctiClaw Desktop - Electron Main Process
- * 
- * 鍔熻兘锛? * - 鍒涘缓鏃犺竟妗嗕富绐楀彛锛?200x800锛? * - 绯荤粺鎵樼洏鏀寔
- * - 鑷姩鏇存柊鏀寔
- * - IPC 閫氫俊
+ *
+ * 功能：
+ * - 创建无边框主窗口（1200x800）
+ * - 系统托盘支持
+ * - 自动更新支持
+ * - IPC 通信
+ * - SiliconFlow AI 对话（内置免费 Qwen2.5 模型）
  */
 
 import { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage, shell } from 'electron';
@@ -11,28 +14,63 @@ import { autoUpdater } from 'electron-updater';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// 鑾峰彇褰撳墠鏂囦欢鐩綍
+// 获取当前文件目录
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 鐜鍒ゆ柇
+// 环境判断
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
-// 绐楀彛瀹炰緥
+// SiliconFlow 配置
+const SILICONFLOW_CONFIG = {
+  apiUrl: 'https://api.siliconflow.cn/v1/chat/completions',
+  defaultModel: 'Qwen/Qwen2.5-7B-Instruct',
+  // 免费模型列表
+  freeModels: [
+    'Qwen/Qwen2.5-7B-Instruct',
+    'deepseek-ai/DeepSeek-V2.5',
+    'Pro/Qwen/Qwen2.5-72B-Instruct',
+  ],
+};
+
+// 持久化存储（使用文件存储 API Key）
+const CONFIG_PATH = path.join(app.getPath('userData'), 'config.json');
+
+async function loadConfig(): Promise<Record<string, string>> {
+  try {
+    const fs = await import('fs/promises');
+    const data = await fs.readFile(CONFIG_PATH, 'utf-8');
+    return JSON.parse(data);
+  } catch {
+    return {};
+  }
+}
+
+async function saveConfig(config: Record<string, string>): Promise<void> {
+  try {
+    const fs = await import('fs/promises');
+    await fs.writeFile(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('[OctiClaw] Failed to save config:', err);
+  }
+}
+
+// 窗口实例
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
 
 /**
- * 鍒涘缓涓荤獥鍙? */
+ * 创建主窗口
+ */
 function createWindow(): void {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     minWidth: 800,
     minHeight: 600,
-    frame: false, // 鏃犺竟妗嗭紝浣跨敤鑷畾涔夋爣棰樻爮
+    frame: false,
     transparent: false,
-    backgroundColor: '#FFF5F5', // 绾㈣壊涓婚鑳屾櫙
+    backgroundColor: '#FFF5F5',
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -40,23 +78,20 @@ function createWindow(): void {
       sandbox: false,
     },
     icon: path.join(__dirname, '../../build/icon.png'),
-    show: false, // 鍒濆闅愯棌锛岀瓑寰呭姞杞藉畬鎴?  });
+    show: false,
+  });
 
-  // 绐楀彛鍑嗗灏辩华鍚庢樉绀?  mainWindow.once('ready-to-show', () => {
+  mainWindow.once('ready-to-show', () => {
     mainWindow?.show();
   });
 
-  // 鍔犺浇椤甸潰
   if (isDev) {
-    // 寮€鍙戞ā寮忓姞杞?Vite 寮€鍙戞湇鍔″櫒
     mainWindow.loadURL('http://localhost:5173');
     mainWindow.webContents.openDevTools();
   } else {
-    // 鐢熶骇妯″紡鍔犺浇鎵撳寘鍚庣殑鏂囦欢
     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
   }
 
-  // 澶勭悊澶栭儴閾炬帴
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
     return { action: 'deny' };
@@ -64,67 +99,111 @@ function createWindow(): void {
 }
 
 /**
- * 鍒涘缓绯荤粺鎵樼洏
+ * 创建系统托盘
  */
 function createTray(): void {
-  // 鍒涘缓鎵樼洏鍥炬爣锛?6x16 绾㈣壊鍏埅楸肩畝鍖栧浘鏍囷級
   const iconPath = path.join(__dirname, '../../build/tray-icon.png');
   const icon = nativeImage.createFromPath(iconPath);
-  
+
   tray = new Tray(icon);
-  
+
   const contextMenu = Menu.buildFromTemplate([
-    { 
-      label: '鏄剧ず涓荤獥鍙?, 
-      click: () => mainWindow?.show() 
-    },
-    { 
-      label: '闅愯棌涓荤獥鍙?, 
-      click: () => mainWindow?.hide() 
-    },
+    { label: '显示主窗口', click: () => mainWindow?.show() },
+    { label: '隐藏主窗口', click: () => mainWindow?.hide() },
     { type: 'separator' },
-    { 
-      label: '妫€鏌ユ洿鏂?, 
-      click: () => checkForUpdates() 
-    },
+    { label: '检查更新', click: () => checkForUpdates() },
     { type: 'separator' },
-    { 
-      label: '閫€鍑?, 
-      click: () => {
-        app.quit();
-      }
-    },
+    { label: '退出', click: () => app.quit() },
   ]);
-  
-  tray.setToolTip('OctiClaw - AI Agent 妗岄潰鍔╂墜');
+
+  tray.setToolTip('OctiClaw - AI Agent 桌面助手');
   tray.setContextMenu(contextMenu);
-  
-  // 鐐瑰嚮鎵樼洏鍥炬爣鏄剧ず绐楀彛
-  tray.on('click', () => {
-    mainWindow?.show();
-  });
+  tray.on('click', () => mainWindow?.show());
 }
 
 /**
- * 妫€鏌ユ洿鏂? */
+ * 检查更新
+ */
 function checkForUpdates(): void {
   if (isDev) {
-    console.log('寮€鍙戞ā寮忥紝璺宠繃鑷姩鏇存柊妫€鏌?);
+    console.log('开发模式，跳过自动更新检查');
     return;
   }
-  
   autoUpdater.checkForUpdatesAndNotify();
 }
 
 /**
- * 璁剧疆 IPC 閫氫俊
+ * 调用 SiliconFlow AI
+ */
+async function callSiliconFlowAI(apiKey: string, model: string, message: string): Promise<{ success: boolean; content?: string; error?: string }> {
+  const systemPrompt = `你是一个友善、智能的 AI 助手，名叫 OctiClaw（八爪章）。你的目标是帮助用户回答问题、解决问题。请用简洁、有帮助的方式回答。`;
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
+
+  try {
+    const response = await fetch(SILICONFLOW_CONFIG.apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: model || SILICONFLOW_CONFIG.defaultModel,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: message },
+        ],
+        stream: false,
+        max_tokens: 2048,
+        temperature: 0.7,
+      }),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeout);
+
+    if (!response.ok) {
+      let errorDetail = `HTTP ${response.status}`;
+      try {
+        const errBody = await response.json() as { error?: { message?: string } };
+        errorDetail = errBody?.error?.message || errorDetail;
+      } catch {}
+      throw new Error(errorDetail);
+    }
+
+    const data = await response.json() as {
+      choices?: Array<{ message?: { content?: string } }>;
+      error?: { message?: string };
+    };
+
+    if (data.error) {
+      return { success: false, error: data.error.message };
+    }
+
+    const content = data.choices?.[0]?.message?.content ?? '';
+    if (!content) {
+      return { success: false, error: 'AI 返回内容为空，请稍后重试。' };
+    }
+
+    return { success: true, content };
+  } catch (err) {
+    clearTimeout(timeout);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[OctiClaw] SiliconFlow AI error:', msg);
+    return {
+      success: false,
+      error: `AI 服务请求失败：${msg}\n\n请检查 API Key 是否正确，或前往 https://cloud.siliconflow.cn 注册获取免费 API Key。`,
+    };
+  }
+}
+
+/**
+ * 设置 IPC 通信
  */
 function setupIPC(): void {
-  // 绐楀彛鎺у埗
-  ipcMain.handle('window:minimize', () => {
-    mainWindow?.minimize();
-  });
-  
+  // 窗口控制
+  ipcMain.handle('window:minimize', () => mainWindow?.minimize());
   ipcMain.handle('window:maximize', () => {
     if (mainWindow?.isMaximized()) {
       mainWindow.unmaximize();
@@ -132,72 +211,54 @@ function setupIPC(): void {
       mainWindow?.maximize();
     }
   });
-  
-  ipcMain.handle('window:close', () => {
-    mainWindow?.hide(); // 鏈€灏忓寲鍒版墭鐩樿€屼笉鏄€€鍑?  });
-  
-  ipcMain.handle('window:isMaximized', () => {
-    return mainWindow?.isMaximized() ?? false;
-  });
-  
-  // 搴旂敤淇℃伅
-  ipcMain.handle('app:getVersion', () => {
-    return app.getVersion();
-  });
-  
-  // AI 瀵硅瘽锛氫唬鐞嗗埌 OpenClaw Gateway
+  ipcMain.handle('window:close', () => mainWindow?.hide());
+  ipcMain.handle('window:isMaximized', () => mainWindow?.isMaximized() ?? false);
+
+  // 应用信息
+  ipcMain.handle('app:getVersion', () => app.getVersion());
+
+  // ========== AI 对话（SiliconFlow） ==========
   ipcMain.handle('chat:sendMessage', async (_, message: string) => {
-    const GATEWAY_TOKEN = 'f017284a880fadcfeade0a7fc8095deb62adcde72f792f15';
-    const GATEWAY_URL = 'http://localhost:28789/v1/chat/completions';
-    const MODEL = 'qclaw/modelroute';
+    const config = await loadConfig();
+    const apiKey = config.siliconflowApiKey || '';
 
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 15000);
-
-      const response = await fetch(GATEWAY_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${GATEWAY_TOKEN}`,
-        },
-        body: JSON.stringify({
-          model: MODEL,
-          messages: [{ role: 'user', content: message }],
-          stream: false,
-          max_tokens: 2048,
-          temperature: 0.8,
-        }),
-        signal: controller.signal,
-      });
-      clearTimeout(timeout);
-
-      if (!response.ok) {
-        throw new Error(`Gateway responded with status ${response.status}`);
-      }
-
-      const data = await response.json() as {
-        choices?: Array<{ message?: { content?: string } }>;
-        error?: { message?: string };
-      };
-
-      if (data.error) {
-        return { success: false, error: data.error.message };
-      }
-
-      const content = data.choices?.[0]?.message?.content ?? '';
-      return { success: true, content };
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
-      console.error('[OctiClaw] AI Gateway error:', errorMessage);
+    if (!apiKey) {
       return {
         success: false,
-        error: `AI 鏈嶅姟鏆傛椂涓嶅彲鐢紙${errorMessage}锛夛紝璇锋鏌?OpenClaw Gateway 鏄惁杩愯涓€俙,
+        error: '请先在设置页面配置 SiliconFlow API Key。\n\n免费注册：https://cloud.siliconflow.cn\n\n免费模型：Qwen2.5-7B-Instruct',
       };
     }
+
+    const model = config.aiModel || SILICONFLOW_CONFIG.defaultModel;
+    return await callSiliconFlowAI(apiKey, model, message);
   });
 
-  // 鑷姩鏇存柊
+  // ========== 设置管理 ==========
+  ipcMain.handle('settings:get', async () => {
+    const config = await loadConfig();
+    return {
+      siliconflowApiKey: config.siliconflowApiKey || '',
+      aiModel: config.aiModel || SILICONFLOW_CONFIG.defaultModel,
+      theme: config.theme || 'light',
+      language: config.language || 'zh-CN',
+      autoStart: config.autoStart === 'true',
+      minimizeToTray: config.minimizeToTray !== 'false',
+      notifications: config.notifications !== 'false',
+    };
+  });
+
+  ipcMain.handle('settings:set', async (_, settings: Record<string, string>) => {
+    const config = await loadConfig();
+    Object.assign(config, settings);
+    await saveConfig(config);
+    return { success: true };
+  });
+
+  ipcMain.handle('settings:getAvailableModels', () => {
+    return SILICONFLOW_CONFIG.freeModels;
+  });
+
+  // 自动更新
   ipcMain.handle('update:check', async () => {
     try {
       const result = await autoUpdater.checkForUpdates();
@@ -206,23 +267,22 @@ function setupIPC(): void {
       return { available: false };
     }
   });
-  
+
   autoUpdater.on('update-available', () => {
     mainWindow?.webContents.send('update:available');
   });
-  
   autoUpdater.on('update-downloaded', () => {
     mainWindow?.webContents.send('update:downloaded');
   });
 }
 
-// 搴旂敤灏辩华
+// 应用就绪
 app.whenReady().then(() => {
   createWindow();
   createTray();
   setupIPC();
   checkForUpdates();
-  
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
@@ -230,13 +290,14 @@ app.whenReady().then(() => {
   });
 });
 
-// 鎵€鏈夌獥鍙ｅ叧闂椂锛坢acOS 闄ゅ锛?app.on('window-all-closed', () => {
+// 所有窗口关闭时（macOS 除外）
+app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
-// 瀹夊叏璁剧疆锛氱姝㈠鑸埌鏈煡鏉ユ簮
+// 安全设置：禁止导航到未知来源
 app.on('web-contents-created', (_, contents) => {
   contents.on('will-navigate', (event) => {
     event.preventDefault();
