@@ -1,6 +1,6 @@
 {
   "name": "octiclaw-desktop",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "OctiClaw - AI Agent Desktop Application",
   "main": "dist-electron/main.js",
   "scripts": {
