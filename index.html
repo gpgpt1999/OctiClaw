@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OctiClaw - Your AI Agent Desktop</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--red:#E53E3E;--red-dark:#C53030;--red-glow:rgba(229,62,62,.35);--bg:#0D0D0D;--surface:rgba(255,255,255,.05);--surface2:rgba(255,255,255,.08);--text:#FFF;--text-muted:rgba(255,255,255,.55);--border:rgba(255,255,255,.10);--radius:16px}
+html{scroll-behavior:smooth}
+body{font-family:Segoe UI,PingFang SC,Microsoft YaHei,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+a{color:inherit;text-decoration:none}ul{list-style:none}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--red);border-radius:99px}
+.container{max-width:1160px;margin:0 auto;padding:0 24px}section{padding:100px 0}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,13,13,.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+nav .container{display:flex;align-items:center;justify-content:space-between;height:64px}
+.nav-logo{display:flex;align-items:center;gap:10px;font-size:1.2rem;font-weight:700}
+.nav-logo svg{width:36px;height:36px}
+.nav-links{display:flex;gap:28px}
+.nav-links a{font-size:.9rem;color:var(--text-muted);transition:color .3s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:var(--red);color:#fff;padding:8px 20px;border-radius:99px;font-size:.875rem;font-weight:600;border:none;cursor:pointer;transition:.3s}
+.nav-cta:hover{background:var(--red-dark);transform:translateY(-1px)}
+#hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding-top:64px}
+.hero-blob{position:absolute;inset:0;pointer-events:none;z-index:0}
+.hero-blob::before,.hero-blob::after{content:"";position:absolute;border-radius:50%;filter:blur(120px);opacity:.25;animation:blobFloat 8s ease-in-out infinite alternate}
+.hero-blob::before{width:600px;height:600px;background:var(--red);top:-150px;right:-100px}
+.hero-blob::after{width:400px;height:400px;background:#6B21A8;bottom:-80px;left:-80px;animation-delay:-4s}
+@keyframes blobFloat{0%{transform:translate(0,0) scale(1)}100%{transform:translate(30px,20px) scale(1.1)}}
+.hero-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:32px}
+.octo-logo{width:160px;height:160px;animation:floatY 3s ease-in-out infinite;filter:drop-shadow(0 0 40px var(--red-glow))}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);padding:6px 16px;border-radius:99px;font-size:.8rem;color:var(--text-muted)}
+.hero-badge .dot{width:7px;height:7px;background:#48BB78;border-radius:50%;box-shadow:0 0 6px #48BB78;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+h1.hero-title{font-size:clamp(3rem,8vw,5.5rem);font-weight:800;letter-spacing:-2px;line-height:1.05;background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.75) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+h1.hero-title span{background:linear-gradient(135deg,var(--red) 0%,#FC8181 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:clamp(1rem,2.5vw,1.25rem);color:var(--text-muted);max-width:540px}
+.hero-btns{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:12px;font-size:1rem;font-weight:600;border:none;cursor:pointer;transition:.3s}
+.btn-primary{background:linear-gradient(135deg,var(--red) 0%,var(--red-dark) 100%);color:#fff;box-shadow:0 8px 32px var(--red-glow)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 16px 48px var(--red-glow)}
+.btn-outline{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+.btn-outline:hover{transform:translateY(-2px)}
+.hero-version{font-size:.85rem;color:var(--text-muted);padding:4px 14px;background:var(--surface);border:1px solid var(--border);border-radius:99px}
+.scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;font-size:.75rem;color:var(--text-muted);animation:bounce 2s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+.section-tag{display:inline-block;font-size:.8rem;font-weight:600;color:var(--red);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+.section-title{font-size:clamp(2rem,4vw,2.75rem);font-weight:800;letter-spacing:-1px;line-height:1.2;margin-bottom:16px}
+.section-desc{color:var(--text-muted);max-width:520px;font-size:1.05rem}
+.section-header{margin-bottom:60px}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
+.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px;transition:.3s;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);position:relative;overflow:hidden}
+.feature-card::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--red-glow) 0%,transparent 60%);opacity:0;transition:opacity .3s}
+.feature-card:hover{transform:translateY(-4px);border-color:rgba(229,62,62,.3)}
+.feature-card:hover::before{opacity:1}
+.feature-icon{width:52px;height:52px;background:linear-gradient(135deg,var(--red) 0%,var(--red-dark) 100%);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:20px;box-shadow:0 8px 24px var(--red-glow)}
+.feature-card h3{font-size:1.15rem;font-weight:700;margin-bottom:8px}
+.feature-card p{color:var(--text-muted);font-size:.9rem}
+#download{background:linear-gradient(180deg,transparent 0%,rgba(229,62,62,.05) 50%,transparent 100%)}
+.download-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:48px}
+.dl-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:36px 28px;text-align:center;transition:.3s;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.dl-card:hover{border-color:rgba(229,62,62,.35);transform:translateY(-4px)}
+.dl-icon{font-size:3rem;margin-bottom:16px}
+.dl-card h3{font-size:1.2rem;font-weight:700;margin-bottom:8px}
+.dl-card p{color:var(--text-muted);font-size:.85rem;margin-bottom:24px}
+.dl-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:99px;font-weight:600;font-size:.95rem;background:linear-gradient(135deg,var(--red) 0%,var(--red-dark) 100%);color:#fff;transition:.3s;box-shadow:0 4px 20px var(--red-glow)}
+.dl-btn:hover{transform:scale(1.04);box-shadow:0 8px 32px var(--red-glow)}
+.sys-req{margin-top:48px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px 36px}
+.sys-req h4{font-size:1rem;font-weight:700;margin-bottom:16px}
+.sys-req-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+.sys-req-item{display:flex;flex-direction:column;gap:4px}
+.sys-req-item .label{font-size:.75rem;color:var(--red);font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.sys-req-item .val{font-size:.9rem;color:var(--text-muted)}
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:48px}
+.skill-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;display:flex;align-items:flex-start;gap:16px;transition:.3s;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.skill-card:hover{transform:translateY(-3px);border-color:rgba(229,62,62,.3)}
+.skill-emoji{font-size:2rem;flex-shrink:0}
+.skill-info h4{font-size:1rem;font-weight:700;margin-bottom:6px}
+.skill-info p{font-size:.85rem;color:var(--text-muted)}
+.skill-tag{margin-top:10px;display:inline-flex;align-items:center;gap:4px;background:rgba(229,62,62,.15);border:1px solid rgba(229,62,62,.25);color:var(--red);font-size:.7rem;font-weight:600;padding:3px 10px;border-radius:99px}
+#workflow{background:linear-gradient(180deg,transparent 0%,rgba(229,62,62,.04) 50%,transparent 100%)}
+.workflow-demo{margin-top:56px}
+.flow-chain{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0}
+.flow-node{display:flex;flex-direction:column;align-items:center;gap:10px}
+.flow-node-circle{width:72px;height:72px;background:var(--surface2);border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;position:relative;z-index:1;transition:.3s}
+.flow-node-circle.active{background:linear-gradient(135deg,var(--red) 0%,var(--red-dark) 100%);border-color:var(--red);box-shadow:0 0 28px var(--red-glow)}
+.flow-node-label{font-size:.8rem;font-weight:600;color:var(--text-muted);text-align:center;max-width:80px}
+.pulse-ring{position:absolute;inset:-8px;border-radius:50%;border:2px solid var(--red);opacity:0;animation:ringPulse 2s ease-out infinite}
+@keyframes ringPulse{0%{transform:scale(.8);opacity:.8}100%{transform:scale(1.4);opacity:0}}
+.flow-track{position:relative;width:60px;height:4px;background:var(--surface2);border-radius:99px;flex-shrink:0;align-self:center;overflow:hidden}
+.flow-arrow{display:flex;align-items:center;padding:0 4px;color:var(--text-muted);font-size:1.4rem;animation:arrowFlow 1.5s ease-in-out infinite}
+.flow-arrow:nth-child(even){animation-delay:.75s}
+@keyframes arrowFlow{0%,100%{opacity:.3;transform:translateX(0)}50%{opacity:1;transform:translateX(4px)}}
+.flow-desc{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+.flow-desc-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;text-align:center}
+.flow-desc-item .num{font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--red) 0%,#FC8181 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px}
+.flow-desc-item p{font-size:.875rem;color:var(--text-muted)}
+footer{border-top:1px solid var(--border);padding:48px 0 32px}
+.footer-inner{display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center}
+.footer-logo{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:700}
+.footer-logo svg{width:32px;height:32px}
+.footer-links{display:flex;gap:28px}
+.footer-links a{font-size:.875rem;color:var(--text-muted);transition:color .3s}
+.footer-links a:hover{color:var(--text)}
+.footer-copy{font-size:.8rem;color:var(--text-muted)}
+@media(max-width:768px){nav .nav-links{display:none}.features-grid{grid-template-columns:1fr}.flow-chain{flex-direction:column}.flow-arrow{transform:rotate(90deg)}.flow-track{width:4px;height:32px}.hero-btns{flex-direction:column;align-items:center}.sys-req-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.sys-req-grid{grid-template-columns:1fr}.dl-card{padding:28px 20px}}
+.fade-up{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+<nav>
+<div class="container">
+<a class="nav-logo" href="#">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<circle cx="50" cy="38" r="28" fill="#E53E3E"/>
+<circle cx="42" cy="33" r="6" fill="#fff"/><circle cx="58" cy="33" r="6" fill="#fff"/>
+<circle cx="43" cy="34" r="3" fill="#1A1A2E"/><circle cx="59" cy="34" r="3" fill="#1A1A2E"/>
+<circle cx="50" cy="42" r="4" fill="#C53030"/>
+<path d="M 22 52 Q 10 58 8 72" stroke="#E53E3E" stroke-width="8" stroke-linecap="round" fill="none"/>
+<path d="M 30 58 Q 18 68 20 82" stroke="#E53E3E" stroke-width="8" stroke-linecap="round" fill="none"/>
+<path d="M 38 60 Q 28 72 30 86" stroke="#E53E3E" stroke-width="8" stroke-linecap="round" fill="none"/>
+<path d="M 50 62 Q 50 74 50 88" stroke="#E53E3E" stroke-width="8" stroke-linecap="round" fill="none"/>
+<path d="M 62 60 Q 72 72 70 86" stroke="#E53E3E" stroke-width="8" stroke-linecap="round" fill="none"/>
+<path d="M 70 58 Q 82 68 80 82" stroke="#E53E3E" stroke-width="8" stroke-linecap="round" fill="none"/>
+<path d="M 78 52 Q 90 58 92 72" stroke="#E53E3E" stroke-width="8" stroke-linecap="round" fill="none"/>
+</svg>
+OctiClaw
+</a>
+<ul class="nav-links">
+<li><a href="#features">功能</a></li>
+<li><a href="#download">下载</a></li>
+<li><a href="#skills">Skills</a></li>
+<li><a href="#workflow">工作流</a></li>
+</ul>
+<button class="nav-cta" onclick="document.getElementById('download').scrollIntoView({behavior:'smooth'})">立即下载</button>
+</div>
+</nav>
+<section id="hero">
+<div class="hero-blob"></div>
+<div class="container hero-inner">
+<svg class="octo-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-label="OctiClaw mascot octopus">
+<defs>
+<radialGradient id="bodyGrad" cx="50%" cy="40%" r="60%">
+<stop offset="0%" stop-color="#FC8181"/><stop offset="100%" stop-color="#C53030"/>
+</radialGradient>
+<filter id="glow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<g fill="none" stroke="url(#bodyGrad)" stroke-width="16" stroke-linecap="round">
+<path d="M 55 115 Q 20 130 12 160"><animate attributeName="d" values="M 55 115 Q 20 130 12 160;M 55 115 Q 10 125 15 165;M 55 115 Q 20 130 12 160" dur="2.2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/></path>
+<path d="M 72 128 Q 45 148 42 175"><animate attributeName="d" values="M 72 128 Q 45 148 42 175;M 72 128 Q 38 142 48 180;M 72 128 Q 45 148 42 175" dur="2.6s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/></path>
+<path d="M 90 132 Q 72 158 74 182"><animate attributeName="d" values="M 90 132 Q 72 158 74 182;M 90 132 Q 68 152 80 188;M 90 132 Q 72 158 74 182" dur="2.0s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/></path>
+<path d="M 100 135 Q 100 158 100 185"><animate attributeName="d" values="M 100 135 Q 100 158 100 185;M 100 135 Q 104 162 96 188;M 100 135 Q 100 158 100 185" dur="1.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/></path>
+<path d="M 110 132 Q 128 158 126 182"><animate attributeName="d" values="M 110 132 Q 128 158 126 182;M 110 132 Q 132 152 120 188;M 110 132 Q 128 158 126 182" dur="2.4s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/></path>
+<path d="M 128 128 Q 155 148 158 175"><animate attributeName="d" values="M 128 128 Q 155 148 158 175;M 128 128 Q 162 142 152 180;M 128 128 Q 155 148 158 175" dur="2.8s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/></path>
+<path d="M 145 115 Q 180 130 188 160"><animate attributeName="d" values="M 145 115 Q 180 130 188 160;M 145 115 Q 190 125 185 165;M 145 115 Q 180 130 188 160" dur="2.1s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1;0.4 0 0.6 1"/></path>
+</g>
+<ellipse cx="100" cy="88" rx="55" ry="50" fill="url(#bodyGrad)" filter="url(#glow)"/>
+<ellipse cx="82" cy="72" rx="16" ry="10" fill="rgba(255,255,255,.18)" transform="rotate(-20 82 72)"/>
+<circle cx="80" cy="82" r="15" fill="#fff"/><circle cx="120" cy="82" r="15" fill="#fff"/>
+<circle cx="83" cy="83" r="8" fill="#1A1A2E"/><circle cx="123" cy="83" r="8" fill="#1A1A2E"/>
+<circle cx="86" cy="80" r="3" fill="#fff"/><circle cx="126" cy="80" r="3" fill="#fff"/>
+<ellipse cx="65" cy="98" rx="12" ry="6" fill="rgba(255,100,100,.25)"/>
+<ellipse cx="135" cy="98" rx="12" ry="6" fill="rgba(255,100,100,.25)"/>
+<path d="M 88 104 Q 100 114 112 104" stroke="#8B0000" stroke-width="3" stroke-linecap="round" fill="none"/>
+<path d="M 72 50 L 80 36 L 92 46 L 100 28 L 108 46 L 120 36 L 128 50 Z" fill="#C53030" stroke="#8B0000" stroke-width="1.5" stroke-linejoin="round"/>
+</svg>
+<div class="hero-badge"><span class="dot"></span>v1.0.0 · 正式版发布</div>
+<h1 class="hero-title">Your <span>AI Agent</span> Desktop</h1>
+<p class="hero-sub">Powered by Octopus Intelligence — 让 AI 成为你桌面上的得力助手。无需配置，开箱即用，支持自定义工作流。</p>
+<div class="hero-btns">
+<button class="btn btn-primary" onclick="document.getElementById('download').scrollIntoView({behavior:'smooth'})">&#x1F5A5; 下载 Windows 版</button>
+<button class="btn btn-outline" onclick="document.getElementById('download').scrollIntoView({behavior:'smooth'})">&#x1F4F2; 下载 macOS 版</button>
+</div>
+<span class="hero-version">OctiClaw v1.0.0 | 2026</span>
+</div>
+<div class="scroll-hint">
+<span>向下滚动</span>
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+</div>
+</section>
+<section id="features">
+<div class="container">
+<div class="section-header fade-up">
+<span class="section-tag">核心功能</span>
+<h2 class="section-title">为什么选择 OctiClaw？</h2>
+<p class="section-desc">强大的 AI 能力，优雅的用户体验，让每一个用户都能轻松掌控 AI Agent。</p>
+</div>
+<div class="features-grid">
+<div class="feature-card fade-up"><div class="feature-icon">&#x1F916;</div><h3>智能对话</h3><p>内置强大 AI 对话能力，支持多轮对话、上下文记忆，精准理解你的意图。</p></div>
+<div class="feature-card fade-up"><div class="feature-icon">&#x1F527;</div><h3>Agent 工作流</h3><p>可视化拖拽编排，自定义自动化流程，让 AI 按你的方式工作。</p></div>
+<div class="feature-card fade-up"><div class="feature-icon">&#x1F9E9;</div><h3>Skills 市场</h3><p>一键安装扩展能力，海量 Skills 随时调用，持续进化的生态体系。</p></div>
+<div class="feature-card fade-up"><div class="feature-icon">&#x1F4A1;</div><h3>一键安装</h3><p>无需配置，开箱即用。下载、安装、运行，三步搞定一切。</p></div>
+<div class="feature-card fade-up"><div class="feature-icon">&#x1F310;</div><h3>多平台支持</h3><p>Windows / macOS / Linux 全平台覆盖，一个账号畅行所有设备。</p></div>
+<div class="feature-card fade-up"><div class="feature-icon">&#x1F512;</div><h3>本地运行</h3><p>数据留在本地，隐私安全有保障。告别云端泄露风险。</p></div>
+</div>
+</div>
+</section>
+<section id="download">
+<div class="container">
+<div class="section-header fade-up" style="text-align:center;display:flex;flex-direction:column;align-items:center">
+<span class="section-tag">立即体验</span>
+<h2 class="section-title">免费下载 OctiClaw</h2>
+<p class="section-desc" style="text-align:center">选择适合你的平台，一键安装，立即开启 AI Agent 之旅。</p>
+</div>
+<div class="download-cards">
+<div class="dl-card fade-up"><div class="dl-icon">&#x1F5A5;</div><h3>Windows</h3><p>Windows 10 及以上 · .exe 安装包</p><a href="#" class="dl-btn">&#x2B07; 下载 .exe</a></div>
+<div class="dl-card fade-up"><div class="dl-icon">&#x1F4F2;</div><h3>macOS</h3><p>macOS 11 Big Sur 及以上 · .dmg 安装包</p><a href="#" class="dl-btn">&#x2B07; 下载 .dmg</a></div>
+<div class="dl-card fade-up"><div class="dl-icon">&#x1F5A5;</div><h3>Linux</h3><p>Ubuntu / Debian / Fedora · .AppImage</p><a href="#" class="dl-btn">&#x2B07; 下载 .AppImage</a></div>
+</div>
+<div class="sys-req fade-up">
+<h4>&#x2139; 系统要求</h4>
+<div class="sys-req-grid">
+<div class="sys-req-item"><span class="label">Windows</span><span class="val">Windows 10 (64-bit) 或更高，4GB RAM，500MB 磁盘空间</span></div>
+<div class="sys-req-item"><span class="label">macOS</span><span class="val">macOS 11 Big Sur 或更高，Apple Silicon 或 Intel，4GB RAM</span></div>
+<div class="sys-req-item"><span class="label">Linux</span><span class="val">Ubuntu 20.04 / Debian 11 / Fedora 36+，glibc 2.31+</span></div>
+<div class="sys-req-item"><span class="label">网络</span><span class="val">需要互联网连接以激活 AI 功能（部分功能支持离线）</span></div>
+</div>
+</div>
+</div>
+</section>
+<section id="skills">
+<div class="container">
+<div class="section-header fade-up">
+<span class="section-tag">预装 Skills</span>
+<h2 class="section-title">开箱即用的超能力</h2>
+<p class="section-desc">OctiClaw 预装了最常用的 Skills，让你从第一天起就拥有完整能力。</p>
+</div>
+<div class="skills-grid">
+<div class="skill-card fade-up"><span class="skill-emoji">&#x1F50E;</span><div class="skill-info"><h4>网页搜索</h4><p>实时联网搜索，获取全球最新资讯与数据。</p><span class="skill-tag">&#x2714; 预装</span></div></div>
+<div class="skill-card fade-up"><span class="skill-emoji">&#x1F4C1;</span><div class="skill-info"><h4>文件处理</h4><p>读取、编辑、整理各类文件，智能归类管理。</p><span class="skill-tag">&#x2714; 预装</span></div></div>
+<div class="skill-card fade-up"><span class="skill-emoji">&#x1F4BB;</span><div class="skill-info"><h4>代码执行</h4><p>运行 Python、JavaScript、Shell 等多语言代码。</p><span class="skill-tag">&#x2714; 预装</span></div></div>
+<div class="skill-card fade-up"><span class="skill-emoji">&#x1F4E7;</span><div class="skill-info"><h4>邮件管理</h4><p>收发邮件、附件管理、智能过滤，高效沟通。</p><span class="skill-tag">&#x2714; 预装</span></div></div>
+<div class="skill-card fade-up"><span class="skill-emoji">&#x2600;</span><div class="skill-info"><h4>天气查询</h4><p>实时天气与未来7天预报，出行无忧。</p><span class="skill-tag">&#x2714; 预装</span></div></div>
+<div class="skill-card fade-up"><span class="skill-emoji">&#x1F4F0;</span><div class="skill-info"><h4>新闻聚合</h4><p>多源科技新闻聚合，追踪行业动态。</p><span class="skill-tag">&#x2714; 预装</span></div></div>
+</div>
+</div>
+</section>
+<section id="workflow">
+<div class="container">
+<div class="section-header fade-up" style="text-align:center;display:flex;flex-direction:column;align-items:center">
+<span class="section-tag">可视化编排</span>
+<h2 class="section-title">工作流演示</h2>
+<p class="section-desc" style="text-align:center">拖拽节点，连线编排，OctiClaw 让复杂的 AI 任务变得简单直观。</p>
+</div>
+<div class="workflow-demo fade-up">
+<div class="flow-chain" role="img" aria-label="工作流演示：触发器 - 搜索节点 - 分析节点 - 执行节点 - 完成">
+<div class="flow-node">
+<div class="flow-node-circle active" style="animation:ringPulse 2s ease-out 0s infinite">&#x1F4C9;<div class="pulse-ring"></div></div>
+<span class="flow-node-label">触发器</span>
+</div>
+<div class="flow-arrow">&#x27A4;</div>
+<div class="flow-track"></div>
+<div class="flow-arrow">&#x27A4;</div>
+<div class="flow-node">
+<div class="flow-node-circle" style="animation:ringPulse 2s ease-out 0.4s infinite">&#x1F50E;</div>
+<span class="flow-node-label">搜索节点</span>
+</div>
+<div class="flow-arrow">&#x27A4;</div>
+<div class="flow-track"></div>
+<div class="flow-arrow">&#x27A4;</div>
+<div class="flow-node">
+<div class="flow-node-circle" style="animation:ringPulse 2s ease-out 0.8s infinite">&#x1F9E9;</div>
+<span class="flow-node-label">分析节点</span>
+</div>
+<div class="flow-arrow">&#x27A4;</div>
+<div class="flow-track"></div>
+<div class="flow-arrow">&#x27A4;</div>
+<div class="flow-node">
+<div class="flow-node-circle" style="animation:ringPulse 2s ease-out 1.2s infinite">&#x1F680;</div>
+<span class="flow-node-label">执行节点</span>
+</div>
+<div class="flow-arrow">&#x27A4;</div>
+<div class="flow-track"></div>
+<div class="flow-arrow">&#x27A4;</div>
+<div class="flow-node">
+<div class="flow-node-circle active" style="animation:ringPulse 2s ease-out 1.6s infinite">&#x2705;</div>
+<span class="flow-node-label">完成</span>
+</div>
+</div>
+</div>
+<div class="flow-desc">
+<div class="flow-desc-item"><div class="num">3</div><p>拖拽即编排<br/>零代码构建复杂流程</p></div>
+<div class="flow-desc-item"><div class="num">50+</div><p>内置节点类型<br/>覆盖常见 AI 任务</p></div>
+<div class="flow-desc-item"><div class="num">1</div><p>键部署<br/>一键运行工作流</p></div>
+</div>
+</div>
+</section>
+<footer>
+<div class="container">
+<div class="footer-inner">
+<div class="footer-logo">
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<circle cx="50" cy="38" r="28" fill="#E53E3E"/>
+<circle cx="42" cy="33" r="6" fill="#fff"/><circle cx="58" cy="33" r="6" fill="#fff"/>
+<circle cx="43" cy="34" r="3" fill="#1A1A2E"/><circle cx="59" cy="34" r="3" fill="#1A1A2E"/>
+<circle cx="50" cy="42" r="4" fill="#C53030"/>
+<path d="M 22 52 Q 10 58 8 72" stroke="#E53E3E" stroke-width="8" stroke-linecap="round" fill="none"/>
+<path d="M 30 58 Q 18 68 20 82" stroke="#E53E3E" stroke-width="8" stroke-linecap="round" fill="none"/>
+<path d="M 38 60 Q 28 72 30 86" stroke="#E53E3E" stroke-width="8" stroke-linecap="round" fill="none"/>
+<path d="M 50 62 Q 50 74 50 88" stroke="#E53E3E" stroke-width="8" stroke-linecap="round" fill="none"/>
+<path d="M 62 60 Q 72 72 70 86" stroke="#E53E3E" stroke-width="8" stroke-linecap="round" fill="none"/>
+<path d="M 70 58 Q 82 68 80 82" stroke="#E53E3E" stroke-width="8" stroke-linecap="round" fill="none"/>
+<path d="M 78 52 Q 90 58 92 72" stroke="#E53E3E" stroke-width="8" stroke-linecap="round" fill="none"/>
+</svg>
+OctiClaw
+</div>
+<div class="footer-links">
+<a href="#">GitHub</a>
+<a href="#">文档</a>
+<a href="#">更新日志</a>
+<a href="#">联系</a>
+</div>
+<p class="footer-copy">Copyright OctiClaw 2026. All rights reserved.</p>
+</div>
+</div>
+</footer>
+<script>
+(function(){
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('visible');
+      }
+    });
+  }, {threshold:0.1});
+  document.querySelectorAll('.fade-up').forEach(function(el){io.observe(el);});
+})();
+</script>
+</body>
+</html>
