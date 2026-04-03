@@ -1,0 +1,149 @@
+{
+  "version": "1.0.0",
+  "updatedAt": "2026-04-03",
+  "preinstalled": [
+    {
+      "id": "web-search",
+      "name": "网页搜索",
+      "icon": "🔍",
+      "description": "集成多搜索引擎，支持实时联网搜索、关键词提取、新闻聚合",
+      "category": "productivity",
+      "tags": ["搜索", "联网", "查询", "research"],
+      "priority": 1,
+      "enabled": true,
+      "dependencies": []
+    },
+    {
+      "id": "file-manager",
+      "name": "文件处理",
+      "icon": "📁",
+      "description": "智能文件管理器，支持文件扫描、自动归类、批量重命名、整理桌面",
+      "category": "productivity",
+      "tags": ["文件", "整理", "桌面", "批量"],
+      "priority": 2,
+      "enabled": true,
+      "dependencies": []
+    },
+    {
+      "id": "code-runner",
+      "name": "代码执行",
+      "icon": "💻",
+      "description": "多语言代码执行环境，支持 Python、JavaScript、Shell、PowerShell",
+      "category": "development",
+      "tags": ["代码", "脚本", "Python", "自动化"],
+      "priority": 3,
+      "enabled": true,
+      "dependencies": ["node", "python"]
+    },
+    {
+      "id": "email",
+      "name": "邮件收发",
+      "icon": "📧",
+      "description": "统一邮件管理，支持 IMAP/SMTP 收发邮件，兼容各类邮箱",
+      "category": "productivity",
+      "tags": ["邮件", "邮箱", "IMAP", "SMTP"],
+      "priority": 4,
+      "enabled": true,
+      "dependencies": []
+    },
+    {
+      "id": "weather",
+      "name": "天气查询",
+      "icon": "🌤️",
+      "description": "实时天气查询，提供当前天气、未来7天预报、穿衣出行建议",
+      "category": "productivity",
+      "tags": ["天气", "温度", "穿衣", "出行"],
+      "priority": 5,
+      "enabled": true,
+      "dependencies": []
+    },
+    {
+      "id": "news-summary",
+      "name": "新闻摘要",
+      "icon": "📰",
+      "description": "多源新闻聚合，自动从 RSS 订阅源抓取并生成智能摘要",
+      "category": "content",
+      "tags": ["新闻", "摘要", "RSS", "资讯"],
+      "priority": 6,
+      "enabled": true,
+      "dependencies": []
+    },
+    {
+      "id": "pdf",
+      "name": "PDF 处理",
+      "icon": "📄",
+      "description": "全功能 PDF 工具箱，支持创建、合并、拆分、OCR 识别、文本提取",
+      "category": "data",
+      "tags": ["PDF", "OCR", "合并", "拆分"],
+      "priority": 7,
+      "enabled": true,
+      "dependencies": ["python"]
+    },
+    {
+      "id": "xlsx",
+      "name": "Excel 处理",
+      "icon": "📊",
+      "description": "专业 Excel 表格处理，支持数据清洗、公式计算、图表生成",
+      "category": "data",
+      "tags": ["Excel", "表格", "xlsx", "数据"],
+      "priority": 8,
+      "enabled": true,
+      "dependencies": ["python"]
+    },
+    {
+      "id": "image-gen",
+      "name": "图像生成",
+      "icon": "🎨",
+      "description": "AI 驱动的图像生成，支持文生图、图生图、海报设计",
+      "category": "content",
+      "tags": ["图像", "AI", "生成", "设计"],
+      "priority": 9,
+      "enabled": true,
+      "dependencies": []
+    },
+    {
+      "id": "web-dev",
+      "name": "网站开发",
+      "icon": "🌐",
+      "description": "前端开发助手，支持 HTML/CSS/JS/React/Vue 代码编写和浏览器自动化",
+      "category": "development",
+      "tags": ["前端", "网站", "HTML", "CSS"],
+      "priority": 10,
+      "enabled": true,
+      "dependencies": ["node"]
+    }
+  ],
+  "featured": [
+    "web-search",
+    "file-manager",
+    "weather",
+    "pdf",
+    "xlsx"
+  ],
+  "categories": {
+    "productivity": {
+      "name": "效率工具",
+      "nameEn": "Productivity",
+      "skills": ["web-search", "file-manager", "email", "weather"],
+      "icon": "⚡"
+    },
+    "development": {
+      "name": "开发工具",
+      "nameEn": "Development",
+      "skills": ["code-runner", "web-dev"],
+      "icon": "🔧"
+    },
+    "content": {
+      "name": "内容创作",
+      "nameEn": "Content Creation",
+      "skills": ["news-summary", "image-gen"],
+      "icon": "✍️"
+    },
+    "data": {
+      "name": "数据处理",
+      "nameEn": "Data Processing",
+      "skills": ["pdf", "xlsx"],
+      "icon": "📈"
+    }
+  }
+}

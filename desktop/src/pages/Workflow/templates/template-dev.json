@@ -1,0 +1,158 @@
+{
+  "nodes": [
+    {
+      "id": "trigger-1",
+      "type": "trigger",
+      "position": { "x": 50, "y": 250 },
+      "data": {
+        "label": "开发触发",
+        "type": "trigger",
+        "config": {
+          "triggerType": "manual"
+        }
+      }
+    },
+    {
+      "id": "agent-1",
+      "type": "agent",
+      "position": { "x": 280, "y": 50 },
+      "data": {
+        "label": "需求分析 Agent",
+        "type": "agent",
+        "config": {
+          "agentId": "requirements-agent",
+          "agentName": "需求分析 Agent",
+          "description": "分析用户需求，生成需求文档",
+          "inputParams": { "requirement": "需求描述" },
+          "outputMapping": { "spec": "需求规格" }
+        }
+      }
+    },
+    {
+      "id": "agent-2",
+      "type": "agent",
+      "position": { "x": 500, "y": 50 },
+      "data": {
+        "label": "架构设计 Agent",
+        "type": "agent",
+        "config": {
+          "agentId": "architecture-agent",
+          "agentName": "架构设计 Agent",
+          "description": "设计系统架构和技术选型",
+          "inputParams": { "spec": "需求规格" },
+          "outputMapping": { "design": "架构设计" }
+        }
+      }
+    },
+    {
+      "id": "agent-3",
+      "type": "agent",
+      "position": { "x": 720, "y": 50 },
+      "data": {
+        "label": "编码 Agent",
+        "type": "agent",
+        "config": {
+          "agentId": "coding-agent",
+          "agentName": "编码 Agent",
+          "description": "根据设计文档编写代码",
+          "inputParams": { "design": "架构设计" },
+          "outputMapping": { "code": "源代码" }
+        }
+      }
+    },
+    {
+      "id": "agent-4",
+      "type": "agent",
+      "position": { "x": 940, "y": 50 },
+      "data": {
+        "label": "测试 Agent",
+        "type": "agent",
+        "config": {
+          "agentId": "testing-agent",
+          "agentName": "测试 Agent",
+          "description": "编写和执行测试用例",
+          "inputParams": { "code": "源代码" },
+          "outputMapping": { "report": "测试报告" }
+        }
+      }
+    },
+    {
+      "id": "agent-5",
+      "type": "agent",
+      "position": { "x": 1160, "y": 50 },
+      "data": {
+        "label": "文档 Agent",
+        "type": "agent",
+        "config": {
+          "agentId": "docs-agent",
+          "agentName": "文档 Agent",
+          "description": "生成项目文档和使用说明",
+          "inputParams": { "code": "源代码" },
+          "outputMapping": { "docs": "项目文档" }
+        }
+      }
+    },
+    {
+      "id": "output-1",
+      "type": "output",
+      "position": { "x": 1380, "y": 250 },
+      "data": {
+        "label": "完成",
+        "type": "output",
+        "config": {
+          "outputType": "log"
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-1",
+      "source": "trigger-1",
+      "target": "agent-1",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#e53935", "strokeWidth": 2 }
+    },
+    {
+      "id": "edge-2",
+      "source": "agent-1",
+      "target": "agent-2",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#e53935", "strokeWidth": 2 }
+    },
+    {
+      "id": "edge-3",
+      "source": "agent-2",
+      "target": "agent-3",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#e53935", "strokeWidth": 2 }
+    },
+    {
+      "id": "edge-4",
+      "source": "agent-3",
+      "target": "agent-4",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#e53935", "strokeWidth": 2 }
+    },
+    {
+      "id": "edge-5",
+      "source": "agent-4",
+      "target": "agent-5",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#e53935", "strokeWidth": 2 }
+    },
+    {
+      "id": "edge-6",
+      "source": "agent-5",
+      "target": "output-1",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#e53935", "strokeWidth": 2 }
+    }
+  ]
+}

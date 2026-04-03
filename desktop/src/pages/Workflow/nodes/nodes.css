@@ -1,0 +1,234 @@
+/**
+ * OctiClaw 工作流节点样式
+ * 红色主题的节点设计
+ */
+
+/* 节点容器基础样式 */
+.workflow-node {
+  background: #fff;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  min-width: 180px;
+  max-width: 220px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* 选中状态 */
+.workflow-node.selected {
+  border-color: #e53935;
+  box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.2);
+}
+
+/* 节点头部 */
+.node-header {
+  background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px 6px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.node-header .node-icon {
+  font-size: 16px;
+}
+
+.node-header .node-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* 节点内容区域 */
+.node-content {
+  padding: 12px;
+}
+
+.node-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  word-break: break-word;
+}
+
+.node-description {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.node-type-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+/* 触发器节点 */
+.trigger-node .node-header {
+  background: linear-gradient(135deg, #ff7043 0%, #e64a19 100%);
+}
+
+/* Agent 节点 */
+.agent-node .node-header {
+  background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+}
+
+.agent-node .node-hint {
+  font-size: 10px;
+  color: #999;
+  text-align: center;
+  padding: 4px;
+  border-top: 1px solid #eee;
+}
+
+/* 条件节点 */
+.condition-node .node-header {
+  background: linear-gradient(135deg, #ab47bc 0%, #8e24aa 100%);
+}
+
+.condition-node .condition-list {
+  margin-top: 8px;
+}
+
+.condition-node .condition-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 4px 0;
+  border-bottom: 1px dashed #eee;
+}
+
+.condition-node .condition-item:last-child {
+  border-bottom: none;
+}
+
+.condition-node .condition-field {
+  color: #e53935;
+  font-weight: 500;
+}
+
+.condition-node .condition-operator {
+  color: #666;
+}
+
+.condition-node .condition-value {
+  color: #333;
+}
+
+/* 输出节点 */
+.output-node .node-header.output-header {
+  background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+}
+
+.output-node .output-badge {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+/* 节点详情 */
+.node-detail {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.node-detail .detail-label {
+  color: #999;
+}
+
+.node-detail .detail-value {
+  color: #666;
+  font-family: monospace;
+}
+
+/* 参数统计 */
+.node-params {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.node-params .params-count {
+  background: #ffebee;
+  color: #e53935;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+/* 分支标签 (条件节点) */
+.branch-labels {
+  position: absolute;
+  right: -50px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.branch-label {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.branch-label.true-label {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.branch-label.false-label {
+  background: #ffebee;
+  color: #c62828;
+}
+
+/* ReactFlow Handle 样式 */
+.workflow-handle {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.workflow-handle.input-handle {
+  background: #e53935;
+  left: -6px;
+}
+
+.workflow-handle.output-handle {
+  background: #43a047;
+  right: -6px;
+}
+
+/* 条件节点的分支 Handle */
+.condition-node .true-handle {
+  background: #43a047;
+}
+
+.condition-node .false-handle {
+  background: #e53935;
+}
+
+/* Handle 连接时的样式 */
+.react-flow__handle-connecting {
+  background: #e53935 !important;
+}
+
+.react-flow__handle-connected {
+  background: #43a047 !important;
+}

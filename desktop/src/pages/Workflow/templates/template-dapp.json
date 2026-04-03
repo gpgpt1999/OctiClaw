@@ -1,0 +1,220 @@
+{
+  "nodes": [
+    {
+      "id": "trigger-1",
+      "type": "trigger",
+      "position": { "x": 50, "y": 300 },
+      "data": {
+        "label": "DAPP 开发触发",
+        "type": "trigger",
+        "config": {
+          "triggerType": "manual"
+        }
+      }
+    },
+    {
+      "id": "agent-1",
+      "type": "agent",
+      "position": { "x": 280, "y": 50 },
+      "data": {
+        "label": "需求分析 Agent",
+        "type": "agent",
+        "config": {
+          "agentId": "dapp-requirements",
+          "agentName": "需求分析 Agent",
+          "description": "分析 DAPP 业务需求，生成需求文档",
+          "inputParams": { "requirement": "需求描述" },
+          "outputMapping": { "spec": "需求规格" }
+        }
+      }
+    },
+    {
+      "id": "condition-1",
+      "type": "condition",
+      "position": { "x": 480, "y": 50 },
+      "data": {
+        "label": "是否需要智能合约",
+        "type": "condition",
+        "config": [
+          {
+            "field": "hasSmartContract",
+            "operator": "equals",
+            "value": "true"
+          }
+        ]
+      }
+    },
+    {
+      "id": "agent-2",
+      "type": "agent",
+      "position": { "x": 720, "y": 0 },
+      "data": {
+        "label": "合约设计 Agent",
+        "type": "agent",
+        "config": {
+          "agentId": "contract-design",
+          "agentName": "合约设计 Agent",
+          "description": "设计智能合约架构和接口",
+          "inputParams": { "spec": "需求规格" },
+          "outputMapping": { "design": "合约设计" }
+        }
+      }
+    },
+    {
+      "id": "agent-3",
+      "type": "agent",
+      "position": { "x": 720, "y": 120 },
+      "data": {
+        "label": "前端设计 Agent",
+        "type": "agent",
+        "config": {
+          "agentId": "frontend-design",
+          "agentName": "前端设计 Agent",
+          "description": "设计 DAPP 前端界面和交互",
+          "inputParams": { "spec": "需求规格" },
+          "outputMapping": { "ui": "UI 设计" }
+        }
+      }
+    },
+    {
+      "id": "agent-4",
+      "type": "agent",
+      "position": { "x": 960, "y": 20 },
+      "data": {
+        "label": "合约开发 Agent",
+        "type": "agent",
+        "config": {
+          "agentId": "contract-dev",
+          "agentName": "合约开发 Agent",
+          "description": "编写智能合约代码",
+          "inputParams": { "design": "合约设计" },
+          "outputMapping": { "code": "合约代码" }
+        }
+      }
+    },
+    {
+      "id": "agent-5",
+      "type": "agent",
+      "position": { "x": 960, "y": 140 },
+      "data": {
+        "label": "前端开发 Agent",
+        "type": "agent",
+        "config": {
+          "agentId": "frontend-dev",
+          "agentName": "前端开发 Agent",
+          "description": "开发 DAPP 前端页面",
+          "inputParams": { "ui": "UI 设计" },
+          "outputMapping": { "code": "前端代码" }
+        }
+      }
+    },
+    {
+      "id": "agent-6",
+      "type": "agent",
+      "position": { "x": 1180, "y": 80 },
+      "data": {
+        "label": "测试部署 Agent",
+        "type": "agent",
+        "config": {
+          "agentId": "test-deploy",
+          "agentName": "测试部署 Agent",
+          "description": "测试合约和前端，部署到测试网络",
+          "inputParams": { 
+            "contractCode": "合约代码",
+            "frontendCode": "前端代码"
+          },
+          "outputMapping": { "result": "部署结果" }
+        }
+      }
+    },
+    {
+      "id": "output-1",
+      "type": "output",
+      "position": { "x": 1400, "y": 300 },
+      "data": {
+        "label": "完成",
+        "type": "output",
+        "config": {
+          "outputType": "webhook",
+          "target": "https://api.example.com/dapp-ready"
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-1",
+      "source": "trigger-1",
+      "target": "agent-1",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#e53935", "strokeWidth": 2 }
+    },
+    {
+      "id": "edge-2",
+      "source": "agent-1",
+      "target": "condition-1",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#e53935", "strokeWidth": 2 }
+    },
+    {
+      "id": "edge-3",
+      "source": "condition-1",
+      "target": "agent-2",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#43a047", "strokeWidth": 2 },
+      "label": "是"
+    },
+    {
+      "id": "edge-4",
+      "source": "condition-1",
+      "target": "agent-3",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#e53935", "strokeWidth": 2 },
+      "label": "否"
+    },
+    {
+      "id": "edge-5",
+      "source": "agent-2",
+      "target": "agent-4",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#e53935", "strokeWidth": 2 }
+    },
+    {
+      "id": "edge-6",
+      "source": "agent-3",
+      "target": "agent-5",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#e53935", "strokeWidth": 2 }
+    },
+    {
+      "id": "edge-7",
+      "source": "agent-4",
+      "target": "agent-6",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#e53935", "strokeWidth": 2 }
+    },
+    {
+      "id": "edge-8",
+      "source": "agent-5",
+      "target": "agent-6",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#e53935", "strokeWidth": 2 }
+    },
+    {
+      "id": "edge-9",
+      "source": "agent-6",
+      "target": "output-1",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#e53935", "strokeWidth": 2 }
+    }
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "nodes": [
+    {
+      "id": "trigger-1",
+      "type": "trigger",
+      "position": { "x": 50, "y": 200 },
+      "data": {
+        "label": "内容创作触发",
+        "type": "trigger",
+        "config": {
+          "triggerType": "manual"
+        }
+      }
+    },
+    {
+      "id": "agent-1",
+      "type": "agent",
+      "position": { "x": 280, "y": 100 },
+      "data": {
+        "label": "研究 Agent",
+        "type": "agent",
+        "config": {
+          "agentId": "research-agent",
+          "agentName": "研究 Agent",
+          "description": "搜集主题相关资料，生成研究报告",
+          "inputParams": { "topic": "输入主题" },
+          "outputMapping": { "report": "研究报告" }
+        }
+      }
+    },
+    {
+      "id": "agent-2",
+      "type": "agent",
+      "position": { "x": 500, "y": 100 },
+      "data": {
+        "label": "写作 Agent",
+        "type": "agent",
+        "config": {
+          "agentId": "writing-agent",
+          "agentName": "写作 Agent",
+          "description": "基于研究报告撰写文章内容",
+          "inputParams": { "report": "研究报告" },
+          "outputMapping": { "article": "文章内容" }
+        }
+      }
+    },
+    {
+      "id": "agent-3",
+      "type": "agent",
+      "position": { "x": 720, "y": 100 },
+      "data": {
+        "label": "排版 Agent",
+        "type": "agent",
+        "config": {
+          "agentId": "formatting-agent",
+          "agentName": "排版 Agent",
+          "description": "美化文章格式，添加图片和样式",
+          "inputParams": { "article": "文章内容" },
+          "outputMapping": { "formatted": "格式化内容" }
+        }
+      }
+    },
+    {
+      "id": "output-1",
+      "type": "output",
+      "position": { "x": 950, "y": 200 },
+      "data": {
+        "label": "发布",
+        "type": "output",
+        "config": {
+          "outputType": "webhook",
+          "target": "https://api.example.com/publish"
+        }
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-1",
+      "source": "trigger-1",
+      "target": "agent-1",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#e53935", "strokeWidth": 2 }
+    },
+    {
+      "id": "edge-2",
+      "source": "agent-1",
+      "target": "agent-2",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#e53935", "strokeWidth": 2 }
+    },
+    {
+      "id": "edge-3",
+      "source": "agent-2",
+      "target": "agent-3",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#e53935", "strokeWidth": 2 }
+    },
+    {
+      "id": "edge-4",
+      "source": "agent-3",
+      "target": "output-1",
+      "type": "smoothstep",
+      "animated": true,
+      "style": { "stroke": "#e53935", "strokeWidth": 2 }
+    }
+  ]
+}

@@ -1,0 +1,646 @@
+/**
+ * OctiClaw 工作流样式文件
+ * 红色主题设计
+ */
+
+/* ============ 全局样式 ============ */
+.workflow-editor-container,
+.workflow-list-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #fafafa;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ============ 工具栏样式 ============ */
+.workflow-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toolbar-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.workflow-name {
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  font-size: 13px;
+}
+
+.toolbar-center {
+  display: flex;
+  gap: 8px;
+}
+
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toolbar-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.toolbar-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.toolbar-btn.add-trigger {
+  background: #ff7043;
+  color: white;
+}
+
+.toolbar-btn.add-agent {
+  background: #e53935;
+  color: white;
+}
+
+.toolbar-btn.add-condition {
+  background: #ab47bc;
+  color: white;
+}
+
+.toolbar-btn.add-output {
+  background: #43a047;
+  color: white;
+}
+
+.toolbar-btn.delete {
+  background: #f44336;
+  color: white;
+}
+
+.toolbar-btn.clear {
+  background: #78909c;
+  color: white;
+}
+
+.toolbar-btn.save {
+  background: #2196f3;
+  color: white;
+}
+
+.toolbar-btn.run {
+  background: #4caf50;
+  color: white;
+}
+
+.toolbar-btn.run.running {
+  background: #ff9800;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.toolbar-right {
+  display: flex;
+  gap: 8px;
+}
+
+/* ============ ReactFlow 画布 ============ */
+.reactflow-wrapper {
+  flex: 1;
+  height: 100%;
+}
+
+/* ReactFlow 控件样式 */
+.workflow-controls {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.workflow-controls button {
+  background: white;
+  border: none;
+  color: #e53935;
+}
+
+.workflow-controls button:hover {
+  background: #ffebee;
+}
+
+/* 缩略图样式 */
+.workflow-minimap {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Panel 信息 */
+.workflow-panel .panel-info {
+  display: flex;
+  gap: 16px;
+  padding: 8px 16px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-size: 13px;
+  color: #666;
+}
+
+/* ============ 节点编辑弹窗 ============ */
+.node-edit-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.node-edit-modal .modal-content {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  min-width: 300px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.node-edit-modal .modal-content h3 {
+  margin: 0 0 16px;
+  color: #e53935;
+}
+
+.node-edit-modal .modal-content p {
+  color: #666;
+  margin: 8px 0;
+}
+
+.node-edit-modal .modal-content button {
+  margin-top: 16px;
+  padding: 8px 24px;
+  background: #e53935;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ============ 工作流列表页面 ============ */
+.workflow-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+  color: white;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.create-btn {
+  padding: 10px 20px;
+  background: white;
+  color: #e53935;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.create-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Tab 切换 */
+.workflow-tabs {
+  display: flex;
+  background: white;
+  border-bottom: 2px solid #f0f0f0;
+  padding: 0 24px;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  color: #e53935;
+}
+
+.tab-btn.active {
+  color: #e53935;
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #e53935;
+}
+
+.tab-badge {
+  padding: 2px 8px;
+  background: #e53935;
+  color: white;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+/* 内容区域 */
+.workflow-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+/* 工作流网格 */
+.workflow-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+/* 空状态 */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.empty-state .empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px;
+  color: #666;
+  font-size: 18px;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* 工作流卡片 */
+.workflow-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.workflow-card:hover {
+  border-color: #e53935;
+  box-shadow: 0 4px 16px rgba(229, 57, 53, 0.15);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.card-badge {
+  padding: 4px 10px;
+  background: #ffebee;
+  color: #e53935;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.card-description {
+  color: #666;
+  font-size: 13px;
+  margin: 0 0 16px;
+  line-height: 1.5;
+}
+
+.card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 16px;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.card-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.card-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.card-btn.edit {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.card-btn.edit:hover {
+  background: #bbdefb;
+}
+
+.card-btn.run {
+  background: #e8f5e9;
+  color: #388e3c;
+}
+
+.card-btn.run:hover {
+  background: #c8e6c9;
+}
+
+.card-btn.delete {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.card-btn.delete:hover {
+  background: #ffcdd2;
+}
+
+/* ============ 模板网格 ============ */
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.template-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 2px solid;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.template-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.template-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.template-name {
+  margin: 0 0 12px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.template-description {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.template-category {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  color: white;
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+
+.template-btn {
+  padding: 10px 24px;
+  background: #e53935;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.template-btn:hover {
+  background: #c62828;
+  transform: translateY(-2px);
+}
+
+/* ============ 弹窗样式 ============ */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #e53935 0%, #c62828 100%);
+  color: white;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  opacity: 0.8;
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #e53935;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px;
+  background: #fafafa;
+  justify-content: flex-end;
+}
+
+.btn-cancel,
+.btn-confirm {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel {
+  background: #f5f5f5;
+  color: #666;
+  border: none;
+}
+
+.btn-cancel:hover {
+  background: #e0e0e0;
+}
+
+.btn-confirm {
+  background: #e53935;
+  color: white;
+  border: none;
+}
+
+.btn-confirm:hover {
+  background: #c62828;
+}
+
+/* ============ 响应式 ============ */
+@media (max-width: 768px) {
+  .workflow-toolbar {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  
+  .toolbar-center,
+  .toolbar-right {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .workflow-grid,
+  .template-grid {
+    grid-template-columns: 1fr;
+  }
+}

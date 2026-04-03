@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <title>OctiClaw App Icon</title>
+  <desc>Cute red octopus mascot for OctiClaw AI Agent application icon</desc>
+
+  <defs>
+    <!-- Background: deep navy circle -->
+    <radialGradient id="bgGrad" cx="40%" cy="35%" r="70%">
+      <stop offset="0%"   stop-color="#1D3557"/>
+      <stop offset="100%" stop-color="#0B132B"/>
+    </radialGradient>
+    <!-- Main body: coral to deep red -->
+    <linearGradient id="bodyGrad" x1="0" y1="0" x2="0.2" y2="1">
+      <stop offset="0%"   stop-color="#FF6B6B"/>
+      <stop offset="55%"  stop-color="#E63946"/>
+      <stop offset="100%" stop-color="#C92A36"/>
+    </linearGradient>
+    <!-- Dark tentacle underside -->
+    <linearGradient id="tentacleDark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#C92A36"/>
+      <stop offset="100%"  stop-color="#9B1B28"/>
+    </linearGradient>
+    <!-- Suction cup radial -->
+    <radialGradient id="suctionGrad" cx="35%" cy="30%">
+      <stop offset="0%"   stop-color="#FFB3B3"/>
+      <stop offset="100%"  stop-color="#D94040"/>
+    </radialGradient>
+    <!-- Soft body shadow -->
+    <filter id="bodyShadow" x="-15%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#0B132B" flood-opacity="0.35"/>
+    </filter>
+    <!-- Eye highlight glow -->
+    <filter id="eyeGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Clip path for circular icon shape -->
+    <clipPath id="circleClip">
+      <circle cx="256" cy="256" r="256"/>
+    </clipPath>
+  </defs>
+
+  <!-- ═══ BACKGROUND CIRCLE ═══ -->
+  <circle cx="256" cy="256" r="256" fill="url(#bgGrad)"/>
+
+  <!-- ═══ SUBTLE TECH DECORATIVE ELEMENTS (background) ═══ -->
+  <g opacity="0.07" stroke="#00D4C8" stroke-width="1" fill="none">
+    <!-- Concentric ring decorations -->
+    <circle cx="256" cy="256" r="200"/>
+    <circle cx="256" cy="256" r="165"/>
+    <!-- Dot grid suggestion -->
+    <circle cx="80"  cy="80"  r="4" fill="#00D4C8" stroke="none"/>
+    <circle cx="180" cy="60"  r="4" fill="#00D4C8" stroke="none"/>
+    <circle cx="430" cy="90"  r="4" fill="#00D4C8" stroke="none"/>
+    <circle cx="460" cy="180" r="4" fill="#00D4C8" stroke="none"/>
+    <circle cx="50"  cy="380" r="4" fill="#00D4C8" stroke="none"/>
+    <circle cx="90"  cy="460" r="4" fill="#00D4C8" stroke="none"/>
+    <circle cx="420" cy="450" r="4" fill="#00D4C8" stroke="none"/>
+    <circle cx="460" cy="360" r="4" fill="#00D4C8" stroke="none"/>
+  </g>
+
+  <!-- ═══ TENTACLES GROUP ═══ -->
+  <g id="tentacles">
+
+    <!-- Tentacle 1 — far upper-left -->
+    <path d="M 188,195 Q 148,205 128,228 Q 110,250 100,268"
+          fill="none" stroke="url(#bodyGrad)" stroke-width="32" stroke-linecap="round"/>
+    <circle cx="100" cy="268" r="10" fill="#E63946"/>
+
+    <!-- Tentacle 2 — upper-left -->
+    <path d="M 200,202 Q 165,228 155,256 Q 146,280 142,300"
+          fill="none" stroke="url(#bodyGrad)" stroke-width="30" stroke-linecap="round"/>
+    <circle cx="142" cy="300" r="10" fill="#E63946"/>
+
+    <!-- Tentacle 3 — left -->
+    <path d="M 210,208 Q 182,242 178,272 Q 174,296 174,316"
+          fill="none" stroke="url(#tentacleDark)" stroke-width="28" stroke-linecap="round"/>
+    <circle cx="174" cy="316" r="9" fill="#C92A36"/>
+
+    <!-- Tentacle 4 — lower-left -->
+    <path d="M 220,212 Q 205,250 206,282 Q 207,306 212,326"
+          fill="none" stroke="url(#tentacleDark)" stroke-width="28" stroke-linecap="round"/>
+    <circle cx="212" cy="326" r="9" fill="#C92A36"/>
+
+    <!-- Tentacle 5 — lower-right -->
+    <path d="M 232,212 Q 248,250 248,282 Q 248,306 244,326"
+          fill="none" stroke="url(#bodyGrad)" stroke-width="28" stroke-linecap="round"/>
+    <circle cx="244" cy="326" r="9" fill="#E63946"/>
+
+    <!-- Tentacle 6 — right -->
+    <path d="M 242,208 Q 268,240 272,272 Q 276,296 278,316"
+          fill="none" stroke="url(#bodyGrad)" stroke-width="28" stroke-linecap="round"/>
+    <circle cx="278" cy="316" r="9" fill="#E63946"/>
+
+    <!-- Tentacle 7 — upper-right -->
+    <path d="M 252,200 Q 285,224 298,252 Q 308,274 312,296"
+          fill="none" stroke="url(#bodyGrad)" stroke-width="30" stroke-linecap="round"/>
+    <circle cx="312" cy="296" r="10" fill="#E63946"/>
+
+    <!-- Tentacle 8 — far upper-right -->
+    <path d="M 260,192 Q 305,200 325,220 Q 342,238 350,258"
+          fill="none" stroke="url(#bodyGrad)" stroke-width="32" stroke-linecap="round"/>
+    <circle cx="350" cy="258" r="10" fill="#E63946"/>
+
+    <!-- ── Suction cups (decorative dots along tentacles) ── -->
+    <!-- T1 cups -->
+    <circle cx="148" cy="212" r="7" fill="url(#suctionGrad)" opacity="0.82"/>
+    <circle cx="130" cy="232" r="7" fill="url(#suctionGrad)" opacity="0.82"/>
+    <!-- T2 cups -->
+    <circle cx="172" cy="234" r="6" fill="url(#suctionGrad)" opacity="0.82"/>
+    <circle cx="158" cy="258" r="6" fill="url(#suctionGrad)" opacity="0.82"/>
+    <!-- T3 cups -->
+    <circle cx="195" cy="242" r="6" fill="url(#suctionGrad)" opacity="0.82"/>
+    <circle cx="182" cy="268" r="6" fill="url(#suctionGrad)" opacity="0.82"/>
+    <!-- T4 cups -->
+    <circle cx="215" cy="252" r="6" fill="url(#suctionGrad)" opacity="0.82"/>
+    <circle cx="210" cy="280" r="6" fill="url(#suctionGrad)" opacity="0.82"/>
+    <!-- T5 cups -->
+    <circle cx="248" cy="252" r="6" fill="url(#suctionGrad)" opacity="0.82"/>
+    <circle cx="246" cy="280" r="6" fill="url(#suctionGrad)" opacity="0.82"/>
+    <!-- T6 cups -->
+    <circle cx="268" cy="242" r="6" fill="url(#suctionGrad)" opacity="0.82"/>
+    <circle cx="276" cy="268" r="6" fill="url(#suctionGrad)" opacity="0.82"/>
+    <!-- T7 cups -->
+    <circle cx="288" cy="228" r="6" fill="url(#suctionGrad)" opacity="0.82"/>
+    <circle cx="302" cy="254" r="6" fill="url(#suctionGrad)" opacity="0.82"/>
+    <!-- T8 cups -->
+    <circle cx="315" cy="212" r="7" fill="url(#suctionGrad)" opacity="0.82"/>
+    <circle cx="336" cy="234" r="7" fill="url(#suctionGrad)" opacity="0.82"/>
+
+  </g>
+
+  <!-- ═══ BODY HEAD ═══ -->
+  <g id="body" filter="url(#bodyShadow)">
+    <!-- Main body oval, slightly top-heavy -->
+    <ellipse cx="230" cy="155" rx="100" ry="90" fill="url(#bodyGrad)"/>
+    <!-- Lower-body shadow (gives depth) -->
+    <ellipse cx="230" cy="188" rx="88"  ry="52" fill="url(#tentacleDark)" opacity="0.22"/>
+    <!-- Head highlight (top-left light source) -->
+    <ellipse cx="198" cy="105" rx="38" ry="22" fill="#FF9999" opacity="0.38"/>
+    <!-- Secondary soft highlight -->
+    <ellipse cx="215" cy="88"  rx="18" ry="10" fill="#FFBBBB" opacity="0.25"/>
+  </g>
+
+  <!-- ═══ EYES ═══ -->
+  <g id="eyes">
+    <!-- Left eye white -->
+    <ellipse cx="198" cy="145" rx="28" ry="30" fill="white" filter="url(#eyeGlow)"/>
+    <!-- Left iris -->
+    <ellipse cx="199" cy="147" rx="18" ry="20" fill="#1D3557"/>
+    <!-- Left pupil large highlight -->
+    <ellipse cx="205" cy="140" rx="7"   ry="8"   fill="white"/>
+    <!-- Left eye tiny secondary shine -->
+    <circle  cx="193" cy="152" r="3"    fill="white" opacity="0.65"/>
+
+    <!-- Right eye white -->
+    <ellipse cx="262" cy="145" rx="28" ry="30" fill="white" filter="url(#eyeGlow)"/>
+    <!-- Right iris -->
+    <ellipse cx="261" cy="147" rx="18" ry="20" fill="#1D3557"/>
+    <!-- Right pupil large highlight -->
+    <ellipse cx="255" cy="140" rx="7"   ry="8"   fill="white"/>
+    <!-- Right eye tiny secondary shine -->
+    <circle  cx="267" cy="152" r="3"    fill="white" opacity="0.65"/>
+  </g>
+
+  <!-- ═══ CUTE SMILE ═══ -->
+  <g id="smile">
+    <!-- Smile curve -->
+    <path d="M 212,176 Q 230,192 248,176"
+          fill="none" stroke="#9B1B28" stroke-width="5.5" stroke-linecap="round"/>
+    <!-- Left cheek blush -->
+    <ellipse cx="182" cy="172" rx="16" ry="9"  fill="#FF8080" opacity="0.42"/>
+    <!-- Right cheek blush -->
+    <ellipse cx="278" cy="172" rx="16" ry="9"  fill="#FF8080" opacity="0.42"/>
+  </g>
+
+  <!-- ═══ LITTLE EARS / HORNS (top bumps) ═══ -->
+  <g id="ears">
+    <ellipse cx="196" cy="68"  rx="16" ry="14" fill="#E63946"/>
+    <ellipse cx="264" cy="68"  rx="16" ry="14" fill="#E63946"/>
+    <!-- Horn/ear highlights -->
+    <ellipse cx="190" cy="62"  rx="8"  ry="5"  fill="#FF8080" opacity="0.55"/>
+    <ellipse cx="258" cy="62"  rx="8"  ry="5"  fill="#FF8080" opacity="0.55"/>
+  </g>
+
+  <!-- ═══ SUBTLE OUTER RING HIGHLIGHT (gives icon polish) ═══ -->
+  <circle cx="256" cy="256" r="252"
+          fill="none" stroke="#FF6B6B" stroke-width="2" opacity="0.12"/>
+
+</svg>
