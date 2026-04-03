@@ -10,7 +10,9 @@ interface SettingsState {
   autoStart: boolean;
   minimizeToTray: boolean;
   notifications: boolean;
-  model: string;
+  siliconflowApiKey: string;
+  aiModel: string;
+  availableModels: string[];
 }
 
 export const SettingsPage: React.FC = () => {
@@ -20,7 +22,9 @@ export const SettingsPage: React.FC = () => {
     autoStart: false,
     minimizeToTray: true,
     notifications: true,
-    model: 'qclaw/modelroute',
+    siliconflowApiKey: '',
+    aiModel: 'Qwen/Qwen2.5-7B-Instruct',
+    availableModels: [],
   });
   const [version, setVersion] = useState('0.1.0');
   const [saved, setSaved] = useState(false);
@@ -28,12 +32,39 @@ export const SettingsPage: React.FC = () => {
   useEffect(() => {
     if (window.electronAPI) {
       window.electronAPI.app.getVersion().then(setVersion);
+      window.electronAPI.settings?.getAvailableModels().then((models) => {
+        setSettings((prev) => ({ ...prev, availableModels: models }));
+      });
+      window.electronAPI.settings?.get().then((cfg) => {
+        setSettings((prev) => ({
+          ...prev,
+          siliconflowApiKey: cfg.siliconflowApiKey,
+          aiModel: cfg.aiModel,
+          theme: cfg.theme as SettingsState['theme'],
+          language: cfg.language,
+          autoStart: cfg.autoStart,
+          minimizeToTray: cfg.minimizeToTray,
+          notifications: cfg.notifications,
+        }));
+      });
     }
   }, []);
 
-  const handleSave = () => {
-    // 保存设置到本地存储（实际使用时用 electron-store）
+  const handleSave = async () => {
+    // 保存设置到本地存储
     localStorage.setItem('octiclaw-settings', JSON.stringify(settings));
+    // 同步到 main 进程（API Key 等敏感配置）
+    if (window.electronAPI) {
+      await window.electronAPI.settings?.set({
+        siliconflowApiKey: settings.siliconflowApiKey,
+        aiModel: settings.aiModel,
+        theme: settings.theme,
+        language: settings.language,
+        autoStart: String(settings.autoStart),
+        minimizeToTray: String(settings.minimizeToTray),
+        notifications: String(settings.notifications),
+      });
+    }
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -76,19 +107,49 @@ export const SettingsPage: React.FC = () => {
           </SettingsRow>
         </SettingsSection>
 
+        {/* SiliconFlow API 配置 */}
+        <SettingsSection title="SiliconFlow AI（免费）">
+          <div style={{ padding: '12px 0' }}>
+            <div style={{ fontSize: '12px', color: '#A0AEC0', marginBottom: '8px' }}>
+              使用 SiliconFlow 免费模型（Qwen2.5-7B-Instruct）进行 AI 对话。
+              <br />
+              <a href="https://cloud.siliconflow.cn" target="_blank" rel="noopener noreferrer" style={{ color: '#E53E3E' }}>
+                点击这里免费注册获取 API Key →
+              </a>
+            </div>
+            <div style={{ marginBottom: '8px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 500, color: '#1A202C', display: 'block', marginBottom: '4px' }}>API Key</label>
+              <input
+                type="password"
+                value={settings.siliconflowApiKey}
+                onChange={(e) => setSettings({ ...settings, siliconflowApiKey: e.target.value })}
+                placeholder="sk-xxxxxxxxxxxxxxxxxxxxxxxx"
+                style={{
+                  ...inputStyle,
+                  width: '100%',
+                }}
+              />
+            </div>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 500, color: '#1A202C', display: 'block', marginBottom: '4px' }}>免费模型</label>
+              <select
+                value={settings.aiModel}
+                onChange={(e) => setSettings({ ...settings, aiModel: e.target.value })}
+                style={{ ...selectStyle, width: '100%' }}
+              >
+                {settings.availableModels.map((m) => (
+                  <option key={m} value={m}>{m}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </SettingsSection>
+
         {/* 模型 */}
         <SettingsSection title="AI 模型">
-          <SettingsRow label="默认模型" description="选择使用的 AI 模型">
-            <select
-              value={settings.model}
-              onChange={(e) => setSettings({ ...settings, model: e.target.value })}
-              style={selectStyle}
-            >
-              <option value="qclaw/modelroute">QClaw (推荐)</option>
-              <option value="claude-3-sonnet">Claude 3 Sonnet</option>
-              <option value="gpt-4">GPT-4</option>
-            </select>
-          </SettingsRow>
+          <div style={{ fontSize: '12px', color: '#A0AEC0', padding: '8px 0' }}>
+            ✓ 已配置 SiliconFlow 免费 AI 模型，无需额外设置。
+          </div>
         </SettingsSection>
 
         {/* 行为 */}
@@ -217,6 +278,17 @@ const selectStyle: React.CSSProperties = {
   fontSize: '13px',
   cursor: 'pointer',
   outline: 'none',
+};
+
+const inputStyle: React.CSSProperties = {
+  padding: '6px 12px',
+  borderRadius: '6px',
+  border: '1px solid #FED7D7',
+  background: '#FFF5F5',
+  color: '#1A202C',
+  fontSize: '13px',
+  outline: 'none',
+  fontFamily: 'inherit',
 };
 
 function getOctopusSVG() {
