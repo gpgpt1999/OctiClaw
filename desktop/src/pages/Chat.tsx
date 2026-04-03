@@ -1,7 +1,6 @@
 /**
- * OctiClaw - 对话页面
- * 类似 OpenClaw 的聊天界面
- */
+ * OctiClaw - 瀵硅瘽椤甸潰
+ * 绫讳技 OpenClaw 鐨勮亰澶╃晫闈? */
 
 import React, { useState, useRef, useEffect } from 'react';
 
@@ -12,11 +11,11 @@ interface Message {
   timestamp: Date;
 }
 
-// 模拟欢迎消息
+// 妯℃嫙娆㈣繋娑堟伅
 const welcomeMessage: Message = {
   id: 'welcome',
   role: 'assistant',
-  content: '你好！我是 OctiClaw，你的 AI Agent 桌面助手 🐙\n\n我可以帮助你完成各种任务，比如：\n- 回答问题和提供建议\n- 编写和审查代码\n- 文件管理和数据处理\n- 自动化工作流\n\n有什么我可以帮你的吗？',
+  content: '浣犲ソ锛佹垜鏄?OctiClaw锛屼綘鐨?AI Agent 妗岄潰鍔╂墜 馃悪\n\n鎴戝凡缁忔帴鍏ョ湡瀹炵殑 AI 鑳藉姏锛屽彲浠ュ府鍔╀綘锛歕n- 鍥炵瓟闂鍜屾彁渚涘缓璁甛n- 缂栧啓鍜屽鏌ヤ唬鐮乗n- 鏂囦欢绠＄悊鍜屾暟鎹鐞哱n- 鑷姩鍖栧伐浣滄祦\n\n鏈変粈涔堟垜鍙互甯綘鐨勫悧锛?,
   timestamp: new Date(),
 };
 
@@ -27,13 +26,11 @@ export const ChatPage: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // 自动滚动到底部
-  useEffect(() => {
+  // 鑷姩婊氬姩鍒板簳閮?  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // 发送消息
-  const handleSend = async () => {
+  // 鍙戦€佹秷鎭?  const handleSend = async () => {
     if (!inputValue.trim() || isLoading) return;
 
     const userMessage: Message = {
@@ -47,21 +44,32 @@ export const ChatPage: React.FC = () => {
     setInputValue('');
     setIsLoading(true);
 
-    // 模拟 AI 响应（实际接入 Agent 后替换）
-    setTimeout(() => {
+    // 璋冪敤 OpenClaw Gateway 杩涜鐪熷疄 AI 瀵硅瘽
+    try {
+      const result = await window.electronAPI?.chat?.sendMessage(userMessage.content);
       const assistantMessage: Message = {
         id: `assistant-${Date.now()}`,
         role: 'assistant',
-        content: `收到你的消息："${userMessage.content}"\n\n这是一个模拟回复。实际使用时会连接到 AI Agent 后端。`,
+        content: result?.success && result.content
+          ? result.content
+          : result?.error ?? '鎶辨瓑锛孉I 鏈嶅姟鏆傛椂涓嶅彲鐢紝璇风‘淇?OpenClaw Gateway 姝ｅ湪杩愯銆?,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, assistantMessage]);
+    } catch {
+      const assistantMessage: Message = {
+        id: `assistant-${Date.now()}`,
+        role: 'assistant',
+        content: '鎶辨瓑锛屽彂閫佹秷鎭椂鍑虹幇閿欒锛岃閲嶈瘯銆?,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, assistantMessage]);
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
-  // 按回车发送（Shift+Enter 换行）
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  // 鎸夊洖杞﹀彂閫侊紙Shift+Enter 鎹㈣锛?  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
@@ -70,7 +78,7 @@ export const ChatPage: React.FC = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {/* 消息列表 */}
+      {/* 娑堟伅鍒楄〃 */}
       <div
         style={{
           flex: 1,
@@ -85,18 +93,18 @@ export const ChatPage: React.FC = () => {
           <MessageBubble key={message.id} message={message} />
         ))}
         
-        {/* 加载指示器 */}
+        {/* 鍔犺浇鎸囩ず鍣?*/}
         {isLoading && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#E53E3E', padding: '12px' }}>
             <LoadingDots />
-            <span style={{ fontSize: '14px' }}>OctiClaw 正在思考...</span>
+            <span style={{ fontSize: '14px' }}>OctiClaw 姝ｅ湪鎬濊€?..</span>
           </div>
         )}
         
         <div ref={messagesEndRef} />
       </div>
 
-      {/* 输入区域 */}
+      {/* 杈撳叆鍖哄煙 */}
       <div
         style={{
           padding: '16px',
@@ -120,7 +128,7 @@ export const ChatPage: React.FC = () => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="输入消息... (Shift+Enter 换行)"
+            placeholder="杈撳叆娑堟伅... (Shift+Enter 鎹㈣)"
             rows={1}
             style={{
               flex: 1,
@@ -146,7 +154,7 @@ export const ChatPage: React.FC = () => {
   );
 };
 
-// 消息气泡组件
+// 娑堟伅姘旀场缁勪欢
 const MessageBubble: React.FC<{ message: Message }> = ({ message }) => {
   const isUser = message.role === 'user';
   
@@ -177,8 +185,7 @@ const MessageBubble: React.FC<{ message: Message }> = ({ message }) => {
   );
 };
 
-// 发送按钮
-const SendButton: React.FC<{ onClick: () => void; disabled: boolean }> = ({ onClick, disabled }) => (
+// 鍙戦€佹寜閽?const SendButton: React.FC<{ onClick: () => void; disabled: boolean }> = ({ onClick, disabled }) => (
   <button
     onClick={onClick}
     disabled={disabled}
@@ -194,7 +201,7 @@ const SendButton: React.FC<{ onClick: () => void; disabled: boolean }> = ({ onCl
       justifyContent: 'center',
       transition: 'all 0.15s ease',
     }}
-    aria-label="发送"
+    aria-label="鍙戦€?
   >
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M22 2L11 13"/>
@@ -203,7 +210,7 @@ const SendButton: React.FC<{ onClick: () => void; disabled: boolean }> = ({ onCl
   </button>
 );
 
-// 加载动画
+// 鍔犺浇鍔ㄧ敾
 const LoadingDots: React.FC = () => (
   <div style={{ display: 'flex', gap: '4px' }}>
     {[0, 1, 2].map((i) => (

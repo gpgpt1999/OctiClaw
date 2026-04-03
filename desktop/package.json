@@ -1,6 +1,6 @@
 {
   "name": "octiclaw-desktop",
-  "version": "0.1.0",
+  "version": "1.0.2",
   "description": "OctiClaw - AI Agent Desktop Application",
   "main": "dist-electron/main.js",
   "scripts": {
@@ -15,7 +15,9 @@
   "dependencies": {
     "electron-updater": "^6.1.7",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "reactflow": "^11.11.4",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
@@ -43,9 +45,10 @@
     ],
     "win": {
       "target": [
-        "nsis"
+        "dir"
       ],
-      "icon": "build/icon.ico"
+      "icon": "build/icon.ico",
+      "signAndEditExecutable": false
     },
     "nsis": {
       "oneClick": false,

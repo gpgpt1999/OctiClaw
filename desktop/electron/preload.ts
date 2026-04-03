@@ -1,13 +1,12 @@
 /**
  * OctiClaw Desktop - Preload Script
  * 
- * 安全桥接：使用 contextBridge 暴露 API 给渲染进程
- * 避免直接暴露 Node.js/Electron API
+ * 瀹夊叏妗ユ帴锛氫娇鐢?contextBridge 鏆撮湶 API 缁欐覆鏌撹繘绋? * 閬垮厤鐩存帴鏆撮湶 Node.js/Electron API
  */
 
 import { contextBridge, ipcRenderer } from 'electron';
 
-// 定义暴露的 API 类型
+// 瀹氫箟鏆撮湶鐨?API 绫诲瀷
 export interface ElectronAPI {
   window: {
     minimize: () => Promise<void>;
@@ -23,11 +22,14 @@ export interface ElectronAPI {
     onAvailable: (callback: () => void) => void;
     onDownloaded: (callback: () => void) => void;
   };
+  chat: {
+    sendMessage: (message: string) => Promise<{ success: boolean; content?: string; error?: string }>;
+  };
 }
 
-// 暴露安全的 API
+// 鏆撮湶瀹夊叏鐨?API
 contextBridge.exposeInMainWorld('electronAPI', {
-  // 窗口控制
+  // 绐楀彛鎺у埗
   window: {
     minimize: () => ipcRenderer.invoke('window:minimize'),
     maximize: () => ipcRenderer.invoke('window:maximize'),
@@ -35,12 +37,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
     isMaximized: () => ipcRenderer.invoke('window:isMaximized'),
   },
   
-  // 应用信息
+  // 搴旂敤淇℃伅
   app: {
     getVersion: () => ipcRenderer.invoke('app:getVersion'),
   },
   
-  // 自动更新
+  // 鑷姩鏇存柊
   update: {
     check: () => ipcRenderer.invoke('update:check'),
     onAvailable: (callback: () => void) => {
@@ -50,9 +52,15 @@ contextBridge.exposeInMainWorld('electronAPI', {
       ipcRenderer.on('update:downloaded', callback);
     },
   },
+
+  // AI 瀵硅瘽
+  chat: {
+    sendMessage: (message: string): Promise<{ success: boolean; content?: string; error?: string }> =>
+      ipcRenderer.invoke('chat:sendMessage', message),
+  },
 } as ElectronAPI);
 
-// 声明全局类型
+// 澹版槑鍏ㄥ眬绫诲瀷
 declare global {
   interface Window {
     electronAPI: ElectronAPI;

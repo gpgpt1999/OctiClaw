@@ -1,11 +1,9 @@
 /**
  * OctiClaw Desktop - Electron Main Process
  * 
- * 功能：
- * - 创建无边框主窗口（1200x800）
- * - 系统托盘支持
- * - 自动更新支持
- * - IPC 通信
+ * 鍔熻兘锛? * - 鍒涘缓鏃犺竟妗嗕富绐楀彛锛?200x800锛? * - 绯荤粺鎵樼洏鏀寔
+ * - 鑷姩鏇存柊鏀寔
+ * - IPC 閫氫俊
  */
 
 import { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage, shell } from 'electron';
@@ -13,55 +11,52 @@ import { autoUpdater } from 'electron-updater';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// 获取当前文件目录
+// 鑾峰彇褰撳墠鏂囦欢鐩綍
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 环境判断
+// 鐜鍒ゆ柇
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
-// 窗口实例
+// 绐楀彛瀹炰緥
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
 
 /**
- * 创建主窗口
- */
+ * 鍒涘缓涓荤獥鍙? */
 function createWindow(): void {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     minWidth: 800,
     minHeight: 600,
-    frame: false, // 无边框，使用自定义标题栏
+    frame: false, // 鏃犺竟妗嗭紝浣跨敤鑷畾涔夋爣棰樻爮
     transparent: false,
-    backgroundColor: '#FFF5F5', // 红色主题背景
+    backgroundColor: '#FFF5F5', // 绾㈣壊涓婚鑳屾櫙
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, '../preload/index.js'),
+      preload: path.join(__dirname, '../preload/preload.js'),
       sandbox: false,
     },
     icon: path.join(__dirname, '../../build/icon.png'),
-    show: false, // 初始隐藏，等待加载完成
-  });
+    show: false, // 鍒濆闅愯棌锛岀瓑寰呭姞杞藉畬鎴?  });
 
-  // 窗口准备就绪后显示
-  mainWindow.once('ready-to-show', () => {
+  // 绐楀彛鍑嗗灏辩华鍚庢樉绀?  mainWindow.once('ready-to-show', () => {
     mainWindow?.show();
   });
 
-  // 加载页面
+  // 鍔犺浇椤甸潰
   if (isDev) {
-    // 开发模式加载 Vite 开发服务器
+    // 寮€鍙戞ā寮忓姞杞?Vite 寮€鍙戞湇鍔″櫒
     mainWindow.loadURL('http://localhost:5173');
     mainWindow.webContents.openDevTools();
   } else {
-    // 生产模式加载打包后的文件
+    // 鐢熶骇妯″紡鍔犺浇鎵撳寘鍚庣殑鏂囦欢
     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
   }
 
-  // 处理外部链接
+  // 澶勭悊澶栭儴閾炬帴
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     shell.openExternal(url);
     return { action: 'deny' };
@@ -69,10 +64,10 @@ function createWindow(): void {
 }
 
 /**
- * 创建系统托盘
+ * 鍒涘缓绯荤粺鎵樼洏
  */
 function createTray(): void {
-  // 创建托盘图标（16x16 红色八爪鱼简化图标）
+  // 鍒涘缓鎵樼洏鍥炬爣锛?6x16 绾㈣壊鍏埅楸肩畝鍖栧浘鏍囷級
   const iconPath = path.join(__dirname, '../../build/tray-icon.png');
   const icon = nativeImage.createFromPath(iconPath);
   
@@ -80,42 +75,41 @@ function createTray(): void {
   
   const contextMenu = Menu.buildFromTemplate([
     { 
-      label: '显示主窗口', 
+      label: '鏄剧ず涓荤獥鍙?, 
       click: () => mainWindow?.show() 
     },
     { 
-      label: '隐藏主窗口', 
+      label: '闅愯棌涓荤獥鍙?, 
       click: () => mainWindow?.hide() 
     },
     { type: 'separator' },
     { 
-      label: '检查更新', 
+      label: '妫€鏌ユ洿鏂?, 
       click: () => checkForUpdates() 
     },
     { type: 'separator' },
     { 
-      label: '退出', 
+      label: '閫€鍑?, 
       click: () => {
         app.quit();
       }
     },
   ]);
   
-  tray.setToolTip('OctiClaw - AI Agent 桌面助手');
+  tray.setToolTip('OctiClaw - AI Agent 妗岄潰鍔╂墜');
   tray.setContextMenu(contextMenu);
   
-  // 点击托盘图标显示窗口
+  // 鐐瑰嚮鎵樼洏鍥炬爣鏄剧ず绐楀彛
   tray.on('click', () => {
     mainWindow?.show();
   });
 }
 
 /**
- * 检查更新
- */
+ * 妫€鏌ユ洿鏂? */
 function checkForUpdates(): void {
   if (isDev) {
-    console.log('开发模式，跳过自动更新检查');
+    console.log('寮€鍙戞ā寮忥紝璺宠繃鑷姩鏇存柊妫€鏌?);
     return;
   }
   
@@ -123,10 +117,10 @@ function checkForUpdates(): void {
 }
 
 /**
- * 设置 IPC 通信
+ * 璁剧疆 IPC 閫氫俊
  */
 function setupIPC(): void {
-  // 窗口控制
+  // 绐楀彛鎺у埗
   ipcMain.handle('window:minimize', () => {
     mainWindow?.minimize();
   });
@@ -140,19 +134,70 @@ function setupIPC(): void {
   });
   
   ipcMain.handle('window:close', () => {
-    mainWindow?.hide(); // 最小化到托盘而不是退出
-  });
+    mainWindow?.hide(); // 鏈€灏忓寲鍒版墭鐩樿€屼笉鏄€€鍑?  });
   
   ipcMain.handle('window:isMaximized', () => {
     return mainWindow?.isMaximized() ?? false;
   });
   
-  // 应用信息
+  // 搴旂敤淇℃伅
   ipcMain.handle('app:getVersion', () => {
     return app.getVersion();
   });
   
-  // 自动更新
+  // AI 瀵硅瘽锛氫唬鐞嗗埌 OpenClaw Gateway
+  ipcMain.handle('chat:sendMessage', async (_, message: string) => {
+    const GATEWAY_TOKEN = 'f017284a880fadcfeade0a7fc8095deb62adcde72f792f15';
+    const GATEWAY_URL = 'http://localhost:28789/v1/chat/completions';
+    const MODEL = 'qclaw/modelroute';
+
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15000);
+
+      const response = await fetch(GATEWAY_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${GATEWAY_TOKEN}`,
+        },
+        body: JSON.stringify({
+          model: MODEL,
+          messages: [{ role: 'user', content: message }],
+          stream: false,
+          max_tokens: 2048,
+          temperature: 0.8,
+        }),
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+
+      if (!response.ok) {
+        throw new Error(`Gateway responded with status ${response.status}`);
+      }
+
+      const data = await response.json() as {
+        choices?: Array<{ message?: { content?: string } }>;
+        error?: { message?: string };
+      };
+
+      if (data.error) {
+        return { success: false, error: data.error.message };
+      }
+
+      const content = data.choices?.[0]?.message?.content ?? '';
+      return { success: true, content };
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      console.error('[OctiClaw] AI Gateway error:', errorMessage);
+      return {
+        success: false,
+        error: `AI 鏈嶅姟鏆傛椂涓嶅彲鐢紙${errorMessage}锛夛紝璇锋鏌?OpenClaw Gateway 鏄惁杩愯涓€俙,
+      };
+    }
+  });
+
+  // 鑷姩鏇存柊
   ipcMain.handle('update:check', async () => {
     try {
       const result = await autoUpdater.checkForUpdates();
@@ -171,7 +216,7 @@ function setupIPC(): void {
   });
 }
 
-// 应用就绪
+// 搴旂敤灏辩华
 app.whenReady().then(() => {
   createWindow();
   createTray();
@@ -185,14 +230,13 @@ app.whenReady().then(() => {
   });
 });
 
-// 所有窗口关闭时（macOS 除外）
-app.on('window-all-closed', () => {
+// 鎵€鏈夌獥鍙ｅ叧闂椂锛坢acOS 闄ゅ锛?app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
-// 安全设置：禁止导航到未知来源
+// 瀹夊叏璁剧疆锛氱姝㈠鑸埌鏈煡鏉ユ簮
 app.on('web-contents-created', (_, contents) => {
   contents.on('will-navigate', (event) => {
     event.preventDefault();
